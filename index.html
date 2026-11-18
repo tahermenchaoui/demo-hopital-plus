@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Démo – Hôpital Plus</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700&family=Manrope:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F3F8F9;--card:#fff;--ink:#14323A;--mute:#4D6870;--teal:#0E5A6B;--teal2:#E1F0F3;--amber:#E8A33D;--line:#CFE1E5;--onteal:#fff;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0C1B20;--card:#12272D;--ink:#E6F1F3;--mute:#9DB8BF;--teal:#5FC0D3;--teal2:#173740;--line:#24444C;--onteal:#0C1B20}}
+:root[data-theme="dark"]{--bg:#0C1B20;--card:#12272D;--ink:#E6F1F3;--mute:#9DB8BF;--teal:#5FC0D3;--teal2:#173740;--line:#24444C;--onteal:#0C1B20}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 Manrope,system-ui,sans-serif}
+.app{max-width:440px;margin:0 auto;min-height:100vh;padding:18px 16px 90px}
+h1{font:700 24px Fraunces,Georgia,serif;margin:0}
+h2{font:700 18px Fraunces,Georgia,serif;margin:18px 0 8px}
+.top{display:flex;justify-content:space-between;align-items:center}
+.demo{background:var(--amber);color:#14323A;font-size:11px;font-weight:700;border-radius:20px;padding:3px 10px}
+.hello{color:var(--mute);margin:4px 0 0}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-top:10px}
+.opt{display:block;width:100%;text-align:left;background:var(--card);color:var(--ink);border:1.5px solid var(--line);border-radius:12px;padding:12px 14px;margin-top:8px;font:inherit;cursor:pointer}
+.opt.on{border-color:var(--teal);background:var(--teal2)}
+.opt small{display:block;color:var(--mute)}
+.slots{display:flex;flex-wrap:wrap;gap:8px}
+.slots .opt{width:auto;margin:0;padding:8px 14px}
+.btn{width:100%;margin-top:16px;background:var(--teal);color:var(--onteal);border:0;border-radius:12px;padding:14px;font:700 15px Manrope,sans-serif;cursor:pointer}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.btn.alt{background:var(--teal2);color:var(--teal)}
+.big{font:700 56px Fraunces,Georgia,serif;color:var(--teal);line-height:1;margin:6px 0}
+.row{display:flex;gap:10px;align-items:center}
+.ic{flex:none;width:40px;height:40px;border-radius:50%;background:var(--teal2);display:grid;place-items:center;font-size:20px}
+.bar{height:8px;background:var(--teal2);border-radius:8px;overflow:hidden;margin-top:10px}
+.bar i{display:block;height:100%;background:var(--teal);width:0;transition:width .6s}
+.sms{background:var(--ink);color:var(--bg);border-radius:14px;padding:12px 14px;margin-top:12px;font-size:14px}
+.note{color:var(--mute);font-size:12px;margin-top:14px}
+nav{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--line);display:flex;padding:8px 8px calc(8px + env(safe-area-inset-bottom,0px))}
+nav button{flex:1;background:none;border:0;color:var(--mute);font:700 12px Manrope,sans-serif;padding:6px;cursor:pointer}
+nav button.on{color:var(--teal)}
+nav span{display:block;font-size:20px}
+.v{display:none}.v.on{display:block}
+</style>
+</head>
+<body>
+<div class="app">
+<div class="top"><h1>Hôpital Plus</h1><span class="demo">Démo · données fictives</span></div>
+<p class="hello">Votre consultation, de la réservation à l’appel.</p>
+
+<section class="v on" id="v1">
+<h2>1. Réserver</h2>
+<button class="opt" data-s="Cardiologie|Consultations externes · Bâtiment B, 2e étage">Cardiologie<small>Consultations externes</small></button>
+<button class="opt" data-s="Dermatologie|Consultations externes · Bâtiment A, 1er étage">Dermatologie<small>Consultations externes</small></button>
+<button class="opt" data-s="Pédiatrie|Consultations externes · Bâtiment C, rez-de-chaussée">Pédiatrie<small>Consultations externes</small></button>
+<h2>Créneau, demain</h2>
+<div class="slots"><button class="opt" data-t="09:00">09:00</button><button class="opt" data-t="09:30">09:30</button><button class="opt" data-t="10:15">10:15</button><button class="opt" data-t="11:00">11:00</button></div>
+<button class="btn" id="book" disabled>Confirmer le rendez-vous</button>
+<p class="note">Le patient peut aussi réserver au guichet : la confirmation est identique.</p>
+</section>
+
+<section class="v" id="v2">
+<h2>2. S’orienter</h2>
+<div class="card"><div class="row"><div class="ic">✅</div><div><b id="cSvc">Aucun rendez-vous</b><br><span id="cWhen" class="hello">Réservez d’abord un créneau.</span></div></div></div>
+<div class="card"><div class="row"><div class="ic">📍</div><div><b>Où aller ?</b><br><span id="cPlace" class="hello">—</span></div></div></div>
+<div class="card"><b>Chemin à l’arrivée</b><br><span class="hello">Entrée principale → suivre les panneaux « Consultations externes » → guichet d’accueil.</span></div>
+</section>
+
+<section class="v" id="v3">
+<h2>3. Suivre mon passage</h2>
+<div class="card" style="text-align:center">
+<span class="hello">Attente estimée</span>
+<div class="big"><span id="w">25</span> min</div>
+<span class="hello">Votre numéro : <b id="num">A-14</b> · devant vous : <b id="ahead">5</b></span>
+<div class="bar"><i id="pr"></i></div></div>
+<button class="btn alt" id="delay">Simuler un retard du médecin</button>
+<button class="btn alt" id="adv">Faire avancer la file</button>
+<div id="smsBox"></div>
+<p class="note">Le délai affiché est une estimation actualisée par le service.</p>
+</section>
+</div>
+
+<nav>
+<button class="on" data-v="v1"><span>🗓️</span>Réserver</button>
+<button data-v="v2"><span>📍</span>S’orienter</button>
+<button data-v="v3"><span>⏱️</span>Mon passage</button>
+</nav>
+
+<script>
+var svc=null,slot=null,wait=25,ahead=5,total=25;
+function show(id){document.querySelectorAll('.v').forEach(function(e){e.classList.toggle('on',e.id===id)});document.querySelectorAll('nav button').forEach(function(b){b.classList.toggle('on',b.dataset.v===id)});window.scrollTo(0,0)}
+document.querySelectorAll('nav button').forEach(function(b){b.onclick=function(){show(b.dataset.v)}});
+function chk(){document.getElementById('book').disabled=!(svc&&slot)}
+document.querySelectorAll('[data-s]').forEach(function(b){b.onclick=function(){document.querySelectorAll('[data-s]').forEach(function(x){x.classList.remove('on')});b.classList.add('on');svc=b.dataset.s.split('|');chk()}});
+document.querySelectorAll('[data-t]').forEach(function(b){b.onclick=function(){document.querySelectorAll('[data-t]').forEach(function(x){x.classList.remove('on')});b.classList.add('on');slot=b.dataset.t;chk()}});
+function upd(){document.getElementById('w').textContent=wait;document.getElementById('ahead').textContent=ahead;document.getElementById('pr').style.width=Math.max(0,Math.min(100,100-wait/total*100))+'%'}
+function sms(t){var d=document.createElement('div');d.className='sms';d.textContent='📩 SMS Hôpital Plus : '+t;document.getElementById('smsBox').prepend(d)}
+document.getElementById('book').onclick=function(){
+document.getElementById('cSvc').textContent='Rendez-vous confirmé · '+svc[0];
+document.getElementById('cWhen').textContent='Demain à '+slot;
+document.getElementById('cPlace').textContent=svc[1];
+sms('RDV confirmé demain à '+slot+', '+svc[0]+'. '+svc[1]+'.');
+upd();show('v2')};
+document.getElementById('delay').onclick=function(){wait+=15;total=Math.max(total,wait);upd();sms('Retard de 15 min en '+(svc?svc[0]:'consultation')+'. Nouvelle attente estimée : '+wait+' min.')};
+document.getElementById('adv').onclick=function(){if(ahead>0){ahead--;wait=Math.max(0,wait-5);upd();if(ahead===0)sms('C’est bientôt à vous. Présentez-vous à l’accueil.')}};
+upd();
+</script>
+</body>
+</html>
